@@ -1,0 +1,47 @@
+# macOS
+.DS_Store
+
+# General editor / tooling files
+*.swp
+.idea/
+.vscode/
+
+# Xcode & Apple tooling
+DerivedData/
+*.xcuserdata
+*.xcuserstate
+*.xccheckout
+
+# Xcode projects / workspaces (keep shared settings)
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+
+# Swift Package Manager
+dist/
+.build/
+.swiftpm/
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Archives & distribution artifacts
+*.xcarchive
+*.ipa
+
+# Dependency managers
+Pods/
+Carthage/Build/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+
+# Compression artifacts
+*.zip
+*.tar.gz
+
+# Backup files
+*.bak
