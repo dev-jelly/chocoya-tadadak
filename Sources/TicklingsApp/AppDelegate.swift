@@ -36,7 +36,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 img.isTemplate = true
                 button.image = img
             } else {
-                button.image = NSImage(systemSymbolName: "keyboard", accessibilityDescription: "Ticklings")
+                if let custom = NSImage(named: "chocoya-tadadak") {
+                    button.image = custom
+                } else {
+                    button.image = NSImage(systemSymbolName: "keyboard", accessibilityDescription: "Chocoya Tadadak")
+                }
             }
             button.action = #selector(openSettings)
             button.target = self
@@ -47,7 +51,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         openItem.target = self
         menu.addItem(openItem)
         menu.addItem(NSMenuItem.separator())
-        let quitItem = NSMenuItem(title: "Quit Ticklings", action: #selector(quitApp), keyEquivalent: "q")
+        let quitItem = NSMenuItem(title: "Quit Chocoya Tadadak", action: #selector(quitApp), keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
         statusItem.menu = menu
