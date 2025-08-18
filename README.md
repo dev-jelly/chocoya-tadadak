@@ -1,5 +1,7 @@
 # Chocoya Tadadak (formerly **Ticklings**)
 
+[🇰🇷 한국어 README](README_ko.md)
+
 > **타다닥** (ta-da-dak) is an onomatopoeia in Korean that mimics the rhythmic *tapping* sound of a mechanical keyboard.  **Chocoya Tadadak** brings that satisfying click-clack back to your fingertips.
 
 Chocoya Tadadak is a lightweight macOS menu-bar app that plays delightful key-click sounds every time you press a key – fully updated for modern macOS and distributed with open-source love.
@@ -32,7 +34,7 @@ Chocoya Tadadak is a lightweight macOS menu-bar app that plays delightful key-cl
 
 ```bash
 # 1. Clone the repo
-$ git clone https://github.com/yourname/chocoya-tadadak.git
+$ git clone https://github.com/dev-jelly/chocoya-tadadak.git
 $ cd chocoya-tadadak
 
 # 2. Build the app (debug)
@@ -77,6 +79,12 @@ Package.swift               # SwiftPM manifest
 
 ---
 
+## Acknowledgements
+
+Chocoya Tadadak is deeply inspired by the open-source macOS app [Tickeys](https://github.com/yingDev/Tickeys) by **yingDev**. Huge thanks to the original creators! 🎉
+
+---
+
 ## License
 
-MIT © 2025 Jelly
+MIT © 2025 dev-jelly

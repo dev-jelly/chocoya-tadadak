@@ -28,7 +28,7 @@
 
 ```bash
 # 1) 저장소 클론
-$ git clone https://github.com/yourname/chocoya-tadadak.git
+$ git clone https://github.com/dev-jelly/chocoya-tadadak.git
 $ cd chocoya-tadadak
 
 # 2) 디버그 빌드
@@ -69,6 +69,12 @@ Package.swift                # SwiftPM 매니페스트
 
 ---
 
+## 감사의 글
+
+본 프로젝트는 **yingDev** 님의 오픈소스 macOS 앱 [Tickeys](https://github.com/yingDev/Tickeys) 에서 큰 영감을 받았습니다. 멋진 원작에 감사드립니다! 🎉
+
+---
+
 ## 라이선스
 
-MIT © 2025 Jelly
+MIT © 2025 dev-jelly
