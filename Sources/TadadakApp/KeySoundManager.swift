@@ -2,11 +2,13 @@ import AVFoundation
 import Foundation
 
 /// Manages loading and playback of key click sounds.
-/// 사운드 테마별 폴더(Resources/<Theme>)의 *.caf / *.wav 파일을 모두 로드하여
-/// 키 입력마다 랜덤으로 하나씩 재생합니다.
+/// 사운드 테마별 폴더(Resources/<Theme>)의 *.caf / *.wav 파일을 모두 로드
+
 final class KeySoundManager {
-    // Currently selected theme name
+    /// Currently selected theme name
     private(set) var currentTheme: String = "typewriter"
+    /// UserDefaults key for persisting selected theme
+    static let defaultsThemeKey = "Tadadak.SelectedTheme"
     // URLs of all sound files for current theme
     private var soundURLs: [URL] = []
     private var keyCodeToURL: [Int: URL] = [:]
@@ -18,7 +20,7 @@ final class KeySoundManager {
 
     // MARK: - Init
 
-    init(theme: String = "typewriter") {
+    init(theme: String = KeySoundManager.loadPersistedTheme()) {
         self.currentTheme = theme
         loadSounds(theme: theme)
     }
@@ -28,12 +30,14 @@ final class KeySoundManager {
     /// 재생 가능한 사운드를 다시 로드합니다(테마 변경 시 호출).
     func loadSounds(theme: String) {
         currentTheme = theme
+        // Persist selection
+        UserDefaults.standard.set(theme, forKey: Self.defaultsThemeKey)
         soundURLs = []
         keyCodeToURL = [:]
         nonUniqueCount = 0
 
         guard let scheme = Self.loadSchemes().first(where: { $0.name == theme }) else {
-            print("Ticklings: scheme not found for theme=\(theme)")
+            print("Tadadak: scheme not found for theme=\(theme)")
             return
         }
 
@@ -43,7 +47,7 @@ final class KeySoundManager {
             if let url = Self.locateResource(fileName: fileName, theme: theme) {
                 urls.append(url)
             } else {
-                print("Ticklings: missing file \(fileName) for theme=\(theme)")
+                print("Tadadak: missing file \(fileName) for theme=\(theme)")
             }
         }
         soundURLs = urls
@@ -57,15 +61,19 @@ final class KeySoundManager {
         nonUniqueCount = max(0, min(scheme.nonUniqueCount ?? soundURLs.count, soundURLs.count))
 
         #if DEBUG
-        let modPath = Bundle.module.resourceURL?.path ?? "nil"
-        let mainPath = Bundle.main.resourceURL?.path ?? "nil"
-        print("Ticklings DEBUG - loadSounds theme=\(theme) module=\(modPath) main=\(mainPath) files=\(soundURLs.count) nonUnique=\(nonUniqueCount)")
+            let modPath = Bundle.module.resourceURL?.path ?? "nil"
+            let mainPath = Bundle.main.resourceURL?.path ?? "nil"
+            print(
+                "Tadadak DEBUG - loadSounds theme=\(theme) module=\(modPath) main=\(mainPath) files=\(soundURLs.count) nonUnique=\(nonUniqueCount)"
+            )
         #endif
     }
 
     /// 지정된 키코드에 맞는 사운드 재생. 매핑이 없으면 일반 키 사운드 범위 내 랜덤.
     func play(forKeyCode keyCode: Int) {
-        print("Ticklings DEBUG - soundURLs.count =", soundURLs.count, "volume =", volume, "key=", keyCode)
+        print(
+            "Tadadak DEBUG - soundURLs.count =", soundURLs.count, "volume =", volume, "key=",
+            keyCode)
         guard volume > 0 else { return }
 
         let url: URL?
@@ -91,7 +99,7 @@ final class KeySoundManager {
             players.append(player)
             cleanupPlayers()
         } catch {
-            print("Ticklings: Failed to play sound - \(error)")
+            print("Tadadak: Failed to play sound - \(error)")
         }
     }
 
@@ -109,16 +117,22 @@ final class KeySoundManager {
             Bundle.module.resourceURL?.appendingPathComponent("Resources"),
             Bundle.module.resourceURL,
             Bundle.main.resourceURL?.appendingPathComponent("Resources"),
-            Bundle.main.resourceURL
+            Bundle.main.resourceURL,
         ].compactMap { $0 }
 
         for base in baseCandidates {
             if let items = try? fm.contentsOfDirectory(
-                at: base, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles])
+                at: base, includingPropertiesForKeys: [.isDirectoryKey],
+                options: [.skipsHiddenFiles])
             {
                 let themes = items.filter { url in
-                    guard let isDir = (try? url.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory, isDir else { return false }
-                    if let files = try? fm.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles]) {
+                    guard
+                        let isDir = (try? url.resourceValues(forKeys: [.isDirectoryKey]))?
+                            .isDirectory, isDir
+                    else { return false }
+                    if let files = try? fm.contentsOfDirectory(
+                        at: url, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+                    {
                         return files.contains { audioExts.contains($0.pathExtension.lowercased()) }
                     }
                     return false
@@ -128,6 +142,11 @@ final class KeySoundManager {
         }
 
         return []
+    }
+
+    // MARK: - Persistence helpers
+    private static func loadPersistedTheme() -> String {
+        UserDefaults.standard.string(forKey: defaultsThemeKey) ?? "typewriter"
     }
 
     // MARK: - Schemes helpers
@@ -158,8 +177,10 @@ final class KeySoundManager {
 
     private static func loadSchemes() -> [Scheme] {
         let candidates: [URL?] = [
-            Bundle.module.url(forResource: "schemes", withExtension: "json", subdirectory: "Resources"),
-            Bundle.main.url(forResource: "schemes", withExtension: "json", subdirectory: "Resources")
+            Bundle.module.url(
+                forResource: "schemes", withExtension: "json", subdirectory: "Resources"),
+            Bundle.main.url(
+                forResource: "schemes", withExtension: "json", subdirectory: "Resources"),
         ]
         for urlOpt in candidates {
             if let url = urlOpt, let data = try? Data(contentsOf: url) {
@@ -177,7 +198,7 @@ final class KeySoundManager {
         let ext = (fileName as NSString).pathExtension
         let candidates: [URL?] = [
             Bundle.module.url(forResource: name, withExtension: ext, subdirectory: subdir),
-            Bundle.main.url(forResource: name, withExtension: ext, subdirectory: subdir)
+            Bundle.main.url(forResource: name, withExtension: ext, subdirectory: subdir),
         ]
         for u in candidates { if let url = u { return url } }
         // Fallback: manual path join

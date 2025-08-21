@@ -4,7 +4,7 @@ set -euo pipefail
 # Defaults (allow override via env or CLI)
 ICON_SRC=${ICON_SRC:-"Sources/image.png"}
 ICON_NAME=${ICON_NAME:-"AppIcon"}
-BUNDLE_ID=${BUNDLE_ID:-"com.ticklings.app"}
+BUNDLE_ID=${BUNDLE_ID:-"com.tadadak.app"}
 SIGN=${SIGN:-0}
 SIGN_IDENTITY=${SIGN_IDENTITY:-""}
 ENTITLEMENTS=${ENTITLEMENTS:-""}
@@ -52,7 +52,7 @@ done
 swift build -c release
 
 # Paths
-PRODUCT_NAME="Ticklings"
+PRODUCT_NAME="Tadadak"
 BUILD_DIR=".build/release"
 EXECUTABLE_PATH="$BUILD_DIR/$PRODUCT_NAME"
 APP_DIR="dist/$PRODUCT_NAME.app"
@@ -76,8 +76,16 @@ if [ -d "$BUILD_DIR/$PRODUCT_NAME.bundle/Resources" ]; then
 fi
 
 # If SPM resource bundle layout differs, copy from Sources
-if [ -d "Sources/TicklingsApp/Resources" ]; then
-  rsync -a "Sources/TicklingsApp/Resources/" "$RESOURCES_DIR/"
+if [ -d "Sources/TadadakApp/Resources" ]; then
+  rsync -a "Sources/TadadakApp/Resources/" "$RESOURCES_DIR/"
+fi
+
+# Compile asset catalog (e.g., MenuBarIcon) into Resources so status bar icon works after packaging
+ASSET_DIR="Sources/TadadakApp/Assets.xcassets"
+if [ -d "$ASSET_DIR" ]; then
+  echo "Compiling asset catalog..."
+  xcrun actool "$ASSET_DIR" --compile "$RESOURCES_DIR" --platform macosx \
+    --minimum-deployment-target 13.0 --enable-on-demand-resources NO >/dev/null
 fi
 
 # Generate .icns app icon if available

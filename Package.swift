@@ -2,16 +2,16 @@
 import PackageDescription
 
 let package = Package(
-    name: "Ticklings",
+    name: "Tadadak",
     platforms: [
         .macOS(.v13)
     ],
     products: [
-        .executable(name: "Ticklings", targets: ["TicklingsApp"])
+        .executable(name: "Tadadak", targets: ["TadadakApp"])
     ],
     targets: [
         .executableTarget(
-            name: "TicklingsApp",
+            name: "TadadakApp",
             dependencies: [],
             resources: [
                 .copy("Resources")

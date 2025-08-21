@@ -1,4 +1,4 @@
-name: Ticklings
+name: Tadadak
 options:
   createIntermediateGroups: true
 settings:
@@ -12,19 +12,19 @@ settings:
     DEVELOPMENT_TEAM: B2T4ZBL7GM
 
 targets:
-  Ticklings:
+  Tadadak:
     type: application
     platform: macOS
     deploymentTarget: "13.0"
     info:
       path: Config/Info.plist
       properties:
-        CFBundleIdentifier: com.ticklings.app
+        CFBundleIdentifier: com.tadadak.app
         LSUIElement: true
         NSHighResolutionCapable: true
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.ticklings.app
+        PRODUCT_BUNDLE_IDENTIFIER: com.tadadak.app
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
       configs:
         Debug:
@@ -36,17 +36,17 @@ targets:
           DEVELOPMENT_TEAM: B2T4ZBL7GM
           ENABLE_HARDENED_RUNTIME: YES
     sources:
-      - path: Sources/TicklingsApp
+      - path: Sources/TadadakApp
         excludes:
           - Resources/**
-      - path: Sources/TicklingsApp/Resources
+      - path: Sources/TadadakApp/Resources
         type: folder
         buildPhase: resources
     scheme:
       testTargets: []
       build:
         targets:
-          Ticklings: all
+          Tadadak: all
       run:
         config: Debug
       archive:

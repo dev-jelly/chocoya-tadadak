@@ -9,6 +9,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var eventTap: CFMachPort?
     private var globalKeyDownMonitor: Any?
     private var globalFlagsChangedMonitor: Any?
+    private var globalKeyUpMonitor: Any?
     private var accessibilityCheckTimer: Timer?
     // Track currently pressed modifier keys (since they fire flagsChanged, not keyDown)
     private var pressedModifierKeyCodes: Set<Int> = []
@@ -24,6 +25,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         if let monitor = globalKeyDownMonitor { NSEvent.removeMonitor(monitor) }
         if let monitor = globalFlagsChangedMonitor { NSEvent.removeMonitor(monitor) }
+        if let monitor = globalKeyUpMonitor { NSEvent.removeMonitor(monitor) }
         accessibilityCheckTimer?.invalidate()
     }
 
@@ -76,6 +78,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                                                    let keyCode = Int(event.getIntegerValueField(.keyboardEventKeycode))
                                                    unmanagedSelf.keySoundManager.play(forKeyCode: keyCode)
                                                }
+                                           case .keyUp:
+                                               let keyCode = Int(event.getIntegerValueField(.keyboardEventKeycode))
+                                               unmanagedSelf.keySoundManager.play(forKeyCode: keyCode)
                                            case .flagsChanged:
                                                // Modifier keys (Shift/Option/Control/Command/CapsLock)
                                                let keyCode = Int(event.getIntegerValueField(.keyboardEventKeycode))
@@ -98,7 +103,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, .commonModes)
             CGEvent.tapEnable(tap: tap, enable: true)
         } else {
-            print("Ticklings: Failed to create event tap; please ensure Accessibility permission is granted.")
+            print("Tadadak: Failed to create event tap; please ensure Accessibility permission is granted.")
         }
     }
 
@@ -142,6 +147,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 }
             }
         }
+        // Key-Up monitor for fallback
+        if globalKeyUpMonitor == nil {
+            globalKeyUpMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyUp) { [weak self] ev in
+                guard let self else { return }
+                self.keySoundManager.play(forKeyCode: Int(ev.keyCode))
+            }
+        }
     }
 
     private func tearDownGlobalMonitorFallback() {
@@ -152,6 +164,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if let monitor = globalFlagsChangedMonitor {
             NSEvent.removeMonitor(monitor)
             globalFlagsChangedMonitor = nil
+        }
+        if let monitor = globalKeyUpMonitor {
+            NSEvent.removeMonitor(monitor)
+            globalKeyUpMonitor = nil
         }
     }
 
@@ -179,7 +195,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let vc = SettingsViewController(keySoundManager: keySoundManager)
         let window = NSWindow(contentViewController: vc)
-        window.title = "Ticklings Settings"
+        window.title = "Tadadak Settings"
         window.styleMask = [.titled, .closable, .miniaturizable]
         window.isReleasedWhenClosed = false
         window.level = .floating
