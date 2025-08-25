@@ -126,13 +126,13 @@ cat > "$INFO_PLIST" <<PLIST
 	<key>CFBundleIdentifier</key>
 	<string>$BUNDLE_ID</string>
 	<key>CFBundleName</key>
-	<string>Ticklings</string>
+	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleDisplayName</key>
-	<string>Ticklings</string>
+	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleIconFile</key>
 	<string>$ICON_NAME</string>
 	<key>CFBundleExecutable</key>
-	<string>Ticklings</string>
+	<string>${PRODUCT_NAME}</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -140,7 +140,7 @@ cat > "$INFO_PLIST" <<PLIST
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSMinimumSystemVersion</key>
-	<string>13.0</string>
+	<string>12.0</string>
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSMainNibFile</key>
