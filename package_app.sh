@@ -4,6 +4,7 @@ set -euo pipefail
 # Defaults (allow override via env or CLI)
 ICON_SRC=${ICON_SRC:-"Sources/image.png"}
 ICON_NAME=${ICON_NAME:-"AppIcon"}
+MENUBAR_ICON_SRC=${MENUBAR_ICON_SRC:-"Sources/menu-icon.png"}
 BUNDLE_ID=${BUNDLE_ID:-"com.tadadak.app"}
 SIGN=${SIGN:-0}
 SIGN_IDENTITY=${SIGN_IDENTITY:-""}
@@ -83,6 +84,16 @@ fi
 # Compile asset catalog (e.g., MenuBarIcon) into Resources so status bar icon works after packaging
 ASSET_DIR="Sources/TadadakApp/Assets.xcassets"
 if [ -d "$ASSET_DIR" ]; then
+  # Generate menu bar template icons before compiling asset catalog
+  MENUBAR_SET="$ASSET_DIR/MenuBarIcon.imageset"
+  if [ -d "$MENUBAR_SET" ]; then
+    echo "Generating menu bar icon from $MENUBAR_ICON_SRC ..."
+    sips -z 18 18  "$MENUBAR_ICON_SRC" --out "$MENUBAR_SET/menubar.png" >/dev/null
+    sips -z 36 36  "$MENUBAR_ICON_SRC" --out "$MENUBAR_SET/menubar@2x.png" >/dev/null
+  else
+    echo "warning: $MENUBAR_SET not found; skipping menu bar icon generation" >&2
+  fi
+
   echo "Compiling asset catalog..."
   xcrun actool "$ASSET_DIR" --compile "$RESOURCES_DIR" --platform macosx \
     --minimum-deployment-target 13.0 --enable-on-demand-resources NO >/dev/null
